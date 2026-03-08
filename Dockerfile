@@ -1,12 +1,15 @@
-FROM node:18
-
+FROM eclipse-temurin:17-jdk AS build
 WORKDIR /app
-
-COPY package*.json ./
-RUN npm install
 
 COPY . .
 
-EXPOSE 3000
+RUN chmod +x mvnw
+RUN ./mvnw clean package -DskipTests
 
-CMD ["npm", "start"]
+FROM eclipse-temurin:17-jre
+WORKDIR /app
+
+COPY --from=build /app/target/*.jar app.jar
+
+EXPOSE 10000
+ENTRYPOINT ["java","-jar","app.jar"]
