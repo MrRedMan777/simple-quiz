@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${quiz.titre}">Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .question-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .question-text {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        .options {
+            display: grid;
+            gap: 10px;
+        }
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .option:hover {
+            background: #f0f0f0;
+        }
+        .option input {
+            margin-right: 10px;
+        }
+        .submit-btn {
+            background: #48bb78;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.2em;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+        }
+        .submit-btn:hover {
+            background: #38a169;
+        }
+        .progress {
+            background: #e2e8f0;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2 th:text="${quiz.titre}">Titre</h2>
+            <a href="/quiz" style="color: #667eea;">← Retour</a>
+        </div>
+        
+        <div class="progress">
+            <span th:text="${quiz.questions.size()} + ' questions'"></span>
+        </div>
+        
+        <form method="post" th:action="@{'/quiz/' + ${quiz.id} + '/repondre'}">
+            <div th:each="question, iter : ${quiz.questions}" class="question-card">
+                <div class="question-text">
+                    <span th:text="'Question ' + ${iter.index + 1} + ': ' + ${question.texte}"></span>
+                </div>
+                
+                <div class="options">
+                    <label class="option">
+                        <input type="radio" th:name="'reponse_' + ${question.id}" th:value="1" required>
+                        <span th:text="${question.option1}">Option 1</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" th:name="'reponse_' + ${question.id}" th:value="2">
+                        <span th:text="${question.option2}">Option 2</span>
+                    </label>
+                    <label class="option" th:if="${question.option3 != null}">
+                        <input type="radio" th:name="'reponse_' + ${question.id}" th:value="3">
+                        <span th:text="${question.option3}">Option 3</span>
+                    </label>
+                    <label class="option" th:if="${question.option4 != null}">
+                        <input type="radio" th:name="'reponse_' + ${question.id}" th:value="4">
+                        <span th:text="${question.option4}">Option 4</span>
+                    </label>
+                </div>
+            </div>
+            
+            <button type="submit" class="submit-btn">Voir mes résultats</button>
+        </form>
+    </div>
+</body>
+</html>

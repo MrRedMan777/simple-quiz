@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Inscription - Quiz Application</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .register-box {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            width: 350px;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #48bb78;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #38a169;
+        }
+        .alert {
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            background: #fed7d7;
+            color: #9b2c2c;
+            border: 1px solid #feb2b2;
+        }
+        .links {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .links a {
+            color: #667eea;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-box">
+        <h2>📝 Inscription</h2>
+        
+        <div th:if="${error}" class="alert" th:text="${error}"></div>
+        
+        <form method="post" th:action="@{/inscription}" th:object="${user}">
+            <div class="form-group">
+                <label>Nom d'utilisateur</label>
+                <input type="text" th:field="*{username}" required>
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" th:field="*{email}" required>
+            </div>
+            <div class="form-group">
+                <label>Mot de passe</label>
+                <input type="password" th:field="*{password}" required>
+            </div>
+            <button type="submit">S'inscrire</button>
+        </form>
+        
+        <div class="links">
+            <p>Déjà un compte ? <a href="/connexion">Se connecter</a></p>
+        </div>
+    </div>
+</body>
+</html>

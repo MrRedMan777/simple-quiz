@@ -1,0 +1,70 @@
+// com/example/quiz/controller/QuizController.java
+package com.example.quiz.controller;
+
+import com.example.quiz.model.Quiz;
+import com.example.quiz.model.Question;
+import com.example.quiz.repository.QuizRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
+
+@Controller
+@RequestMapping("/quiz")
+public class QuizController {
+    
+    @Autowired
+    private QuizRepository quizRepository;
+    
+    @GetMapping
+    public String listeQuiz(Model model) {
+        List<Quiz> quizs = quizRepository.findAll();
+        model.addAttribute("quizs", quizs);
+        return "quizzes";
+    }
+    
+    @GetMapping("/{id}")
+    public String voirQuiz(@PathVariable Long id, Model model) {
+        Quiz quiz = quizRepository.findById(id).orElse(null);
+        if (quiz == null) {
+            return "redirect:/quiz";
+        }
+        model.addAttribute("quiz", quiz);
+        return "quiz";
+    }
+    
+    @PostMapping("/{id}/repondre")
+    public String repondreQuiz(@PathVariable Long id, 
+                               @RequestParam Map<String, String> reponses, 
+                               Model model) {
+        
+        Quiz quiz = quizRepository.findById(id).orElse(null);
+        if (quiz == null) {
+            return "redirect:/quiz";
+        }
+        
+        List<Question> questions = quiz.getQuestions();
+        int score = 0;
+        
+        for (Question question : questions) {
+            String reponseKey = "reponse_" + question.getId();
+            String reponseValue = reponses.get(reponseKey);
+            
+            if (reponseValue != null) {
+                int reponseChoisie = Integer.parseInt(reponseValue);
+                if (reponseChoisie == question.getBonneReponse()) {
+                    score++;
+                }
+            }
+        }
+        
+        model.addAttribute("quiz", quiz);
+        model.addAttribute("score", score);
+        model.addAttribute("total", questions.size());
+        
+        return "resultat";
+    }
+}

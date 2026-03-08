@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz disponibles</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .quiz-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .quiz-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .quiz-card h3 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+        .quiz-card p {
+            color: #666;
+            margin-bottom: 15px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .btn:hover {
+            background: #5a67d8;
+        }
+        .logout-btn {
+            background: #e53e3e;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h2>📋 Quiz disponibles</h2>
+        <form method="post" th:action="@{/deconnexion}">
+            <button type="submit" class="logout-btn">Déconnexion</button>
+        </form>
+    </div>
+    
+    <div class="quiz-grid">
+        <div th:each="quiz : ${quizs}" class="quiz-card">
+            <h3 th:text="${quiz.titre}">Titre</h3>
+            <p th:text="${quiz.description}">Description</p>
+            <p>📝 <span th:text="${quiz.questions.size()}">0</span> questions</p>
+            <a th:href="@{'/quiz/' + ${quiz.id}}" class="btn">Commencer</a>
+        </div>
+    </div>
+    
+    <div th:if="${quizs.empty}" style="text-align: center; margin-top: 50px;">
+        <p>Aucun quiz disponible pour le moment.</p>
+    </div>
+</body>
+</html>
