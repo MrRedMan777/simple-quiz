@@ -459,26 +459,29 @@
                 <a href="/profil" class="nav-link active">Profil</a>
             </div>
 
-            <div class="user-menu">
-                <div class="user-avatar" th:text="${#authentication != null and #authentication.name != null and #authentication.name.length() > 0} ? ${#authentication.name.substring(0,1).toUpperCase()} : '?'">?</div>
-                <div class="dropdown">
-                    <a href="/profil">👤 Mon profil</a>
-                    <a href="/quiz/resultats">📊 Mes résultats</a>
-                    <hr>
-                    <form method="post" th:action="@{/deconnexion}">
-                        <button type="submit">🚪 Déconnexion</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </nav>
+           <div class="user-menu">
+    <div class="user-avatar" 
+         th:text="${#authentication != null and #authentication.name != null and #authentication.name.length() > 0} ? ${#authentication.name.substring(0,1).toUpperCase()} : '?'">
+        ?
+    </div>
+    <div class="dropdown">
+        <a href="/profil">👤 Mon profil</a>
+        <a href="/quiz/resultats">📊 Mes résultats</a>
+        <hr>
+        <form method="post" th:action="@{/deconnexion}">
+            <button type="submit">🚪 Déconnexion</button>
+        </form>
+    </div>
+</div>
 
     <div class="container">
         <div class="profile-header">
             <div class="profile-info">
-                <div class="profile-avatar" th:text="${#authentication != null and #authentication.name != null and #authentication.name.length() > 0} ? ${#authentication.name.substring(0,1).toUpperCase()} : '?'">?</div>
-                <div class="profile-details">
-                    <h1 th:text="${#authentication != null and #authentication.name != null} ? ${#authentication.name} : 'Utilisateur'">Utilisateur</h1>
+               <div class="profile-avatar" 
+     th:text="${#authentication != null and #authentication.name != null and #authentication.name.length() > 0} ? ${#authentication.name.substring(0,1).toUpperCase()} : '?'">
+    ?
+</div>                <div class="profile-details">
+                   <h1 th:text="${#authentication != null and #authentication.name != null} ? ${#authentication.name} : 'Utilisateur'">Utilisateur</h1>
                     <p>
                         <span>📧</span>
                         <span th:text="${user != null and user.email != null} ? ${user.email} : 'email@example.com'">email@example.com</span>

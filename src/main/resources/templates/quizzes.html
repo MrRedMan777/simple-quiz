@@ -485,19 +485,21 @@
                 <a href="/profil" class="nav-link">Profil</a>
             </div>
 
-            <div class="user-menu">
-                <div class="user-avatar" th:text="${#authentication.name.substring(0,1)}">C</div>
-                <div class="dropdown">
-                    <a href="/profil">👤 Mon profil</a>
-                    <a href="/quiz/resultats">📊 Mes résultats</a>
-                    <hr>
-                    <form method="post" th:action="@{/deconnexion}">
-                        <button type="submit">🚪 Déconnexion</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </nav>
+           <!-- Dans le menu utilisateur, trouvez cette partie et remplacez-la par : -->
+<div class="user-menu">
+    <div class="user-avatar" 
+         th:text="${#authentication != null and #authentication.name != null and #authentication.name.length() > 0} ? ${#authentication.name.substring(0,1).toUpperCase()} : '?'">
+        ?
+    </div>
+    <div class="dropdown">
+        <a href="/profil">👤 Mon profil</a>
+        <a href="/quiz/resultats">📊 Mes résultats</a>
+        <hr>
+        <form method="post" th:action="@{/deconnexion}">
+            <button type="submit">🚪 Déconnexion</button>
+        </form>
+    </div>
+</div>
 
     <div class="container">
         <div class="header-section">
