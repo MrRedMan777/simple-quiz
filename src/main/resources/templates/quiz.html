@@ -1,122 +1,696 @@
+<!-- quiz.html -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title th:text="${quiz.titre}">Quiz</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${quiz.titre} + ' | Quiz App'">Quiz | Quiz App</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f5f5f5;
+        * {
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
         }
-        .header {
+
+        body {
+            background: #f8f9fa;
+            min-height: 100vh;
+        }
+
+        /* Navbar */
+        .navbar {
             background: white;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
+            padding: 20px 40px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            background: rgba(255,255,255,0.9);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        .question-card {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .question-text {
-            font-size: 1.2em;
-            font-weight: bold;
-            margin-bottom: 15px;
-            color: #333;
-        }
-        .options {
-            display: grid;
-            gap: 10px;
-        }
-        .option {
+
+        .nav-brand {
             display: flex;
             align-items: center;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            cursor: pointer;
+            gap: 10px;
+            text-decoration: none;
         }
-        .option:hover {
-            background: #f0f0f0;
+
+        .nav-brand h2 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 1.8em;
+            font-weight: 700;
         }
-        .option input {
-            margin-right: 10px;
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 30px;
         }
-        .submit-btn {
-            background: #48bb78;
+
+        .nav-link {
+            text-decoration: none;
+            color: #555;
+            font-weight: 500;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            color: #667eea;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: relative;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
             color: white;
-            padding: 15px 30px;
-            border: none;
-            border-radius: 5px;
+            font-weight: bold;
             font-size: 1.2em;
             cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .user-avatar:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .dropdown {
+            position: absolute;
+            top: 60px;
+            right: 0;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            padding: 15px 0;
+            min-width: 200px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .user-menu:hover .dropdown {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown a, .dropdown button {
+            display: block;
             width: 100%;
+            padding: 10px 20px;
+            text-align: left;
+            border: none;
+            background: none;
+            color: #555;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.95em;
+        }
+
+        .dropdown a:hover, .dropdown button:hover {
+            background: #f5f5f5;
+            color: #667eea;
+        }
+
+        .dropdown hr {
+            margin: 10px 0;
+            border: none;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        /* Main content */
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        /* Quiz Header */
+        .quiz-header {
+            background: white;
+            border-radius: 30px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            animation: slideDown 0.5s;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .quiz-header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .quiz-header h1 {
+            font-size: 2.2em;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .back-btn {
+            padding: 10px 20px;
+            background: #f5f5f5;
+            border: none;
+            border-radius: 25px;
+            color: #666;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .back-btn:hover {
+            background: #e0e0e0;
+            transform: translateX(-5px);
+        }
+
+        .quiz-meta {
+            display: flex;
+            gap: 30px;
             margin-top: 20px;
         }
-        .submit-btn:hover {
-            background: #38a169;
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #666;
         }
-        .progress {
-            background: #e2e8f0;
-            padding: 10px;
-            border-radius: 5px;
+
+        .meta-item i {
+            font-size: 1.2em;
+        }
+
+        .progress-container {
+            margin-top: 20px;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            color: #666;
+        }
+
+        .progress-bar {
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.3s;
+            border-radius: 10px;
+        }
+
+        /* Questions */
+        .questions-container {
+            background: white;
+            border-radius: 30px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            animation: fadeIn 0.5s 0.2s both;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+            from { opacity: 0; }
+        }
+
+        .question-card {
+            background: #f8f9fa;
+            border-radius: 20px;
+            padding: 25px;
             margin-bottom: 20px;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .question-card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.1);
+        }
+
+        .question-card.answered {
+            border-left: 5px solid #4CAF50;
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .question-number {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .question-text {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .options-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .option-item:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.1);
+        }
+
+        .option-item.selected {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: transparent;
+            color: white;
+        }
+
+        .option-item input[type="radio"] {
+            margin-right: 15px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+
+        .option-item.selected input[type="radio"] {
+            accent-color: white;
+        }
+
+        .submit-container {
+            margin-top: 30px;
             text-align: center;
+        }
+
+        .submit-btn {
+            padding: 18px 50px;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            font-size: 1.2em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 20px rgba(76, 175, 80, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(76, 175, 80, 0.4);
+        }
+
+        .submit-btn:active:not(:disabled) {
+            transform: translateY(-1px);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .submit-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        /* Timer */
+        .timer {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #f0f0f0;
+            padding: 10px 20px;
+            border-radius: 30px;
+            color: #666;
+        }
+
+        .timer.warning {
+            background: #fff3cd;
+            color: #856404;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .timer i {
+            font-size: 1.2em;
+        }
+
+        .timer-value {
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 15px 20px;
+            }
+
+            .nav-menu {
+                display: none;
+            }
+
+            .quiz-header h1 {
+                font-size: 1.8em;
+            }
+
+            .quiz-meta {
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+
+            .options-container {
+                grid-template-columns: 1fr;
+            }
+
+            .question-text {
+                font-size: 1.1em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .quiz-header-top {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+
+            .quiz-header {
+                padding: 20px;
+            }
+
+            .questions-container {
+                padding: 20px;
+            }
+
+            .question-card {
+                padding: 20px;
+            }
+
+            .submit-btn {
+                width: 100%;
+                padding: 15px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h2 th:text="${quiz.titre}">Titre</h2>
-            <a href="/quiz" style="color: #667eea;">← Retour</a>
-        </div>
-        
-        <div class="progress">
-            <span th:text="${quiz.questions.size()} + ' questions'"></span>
-        </div>
-        
-        <form method="post" th:action="@{'/quiz/' + ${quiz.id} + '/repondre'}">
-            <div th:each="question, iter : ${quiz.questions}" class="question-card">
-                <div class="question-text">
-                    <span th:text="'Question ' + ${iter.index + 1} + ': ' + ${question.texte}"></span>
-                </div>
-                
-                <div class="options">
-                    <label class="option">
-                        <input type="radio" th:name="'reponse_' + ${question.id}" th:value="1" required>
-                        <span th:text="${question.option1}">Option 1</span>
-                    </label>
-                    <label class="option">
-                        <input type="radio" th:name="'reponse_' + ${question.id}" th:value="2">
-                        <span th:text="${question.option2}">Option 2</span>
-                    </label>
-                    <label class="option" th:if="${question.option3 != null}">
-                        <input type="radio" th:name="'reponse_' + ${question.id}" th:value="3">
-                        <span th:text="${question.option3}">Option 3</span>
-                    </label>
-                    <label class="option" th:if="${question.option4 != null}">
-                        <input type="radio" th:name="'reponse_' + ${question.id}" th:value="4">
-                        <span th:text="${question.option4}">Option 4</span>
-                    </label>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="nav-brand">
+                <h2>✨ QuizMaster</h2>
+            </a>
+
+            <div class="nav-menu">
+                <a href="/quiz" class="nav-link">Accueil</a>
+                <a href="/quiz" class="nav-link">Quiz</a>
+                <a href="/classement" class="nav-link">Classement</a>
+                <a href="/profil" class="nav-link">Profil</a>
+            </div>
+
+            <div class="user-menu">
+                <div class="user-avatar" th:text="${#authentication.name.substring(0,1)}">C</div>
+                <div class="dropdown">
+                    <a href="/profil">👤 Mon profil</a>
+                    <a href="/quiz/resultats">📊 Mes résultats</a>
+                    <hr>
+                    <form method="post" th:action="@{/deconnexion}">
+                        <button type="submit">🚪 Déconnexion</button>
+                    </form>
                 </div>
             </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="quiz-header">
+            <div class="quiz-header-top">
+                <h1 th:text="${quiz.titre}">Titre du Quiz</h1>
+                <a href="/quiz" class="back-btn">← Retour</a>
+            </div>
+            <p th:text="${quiz.description}" style="color: #666;">Description du quiz</p>
             
-            <button type="submit" class="submit-btn">Voir mes résultats</button>
+            <div class="quiz-meta">
+                <div class="meta-item">
+                    <i>📝</i>
+                    <span th:text="${quiz.questions.size()} + ' questions'">10 questions</span>
+                </div>
+                <div class="meta-item">
+                    <i>⏱️</i>
+                    <span>30 minutes</span>
+                </div>
+                <div class="timer" id="timer">
+                    <i>⏰</i>
+                    <span class="timer-value" id="timerValue">30:00</span>
+                </div>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-info">
+                    <span>Progression</span>
+                    <span id="answeredCount">0/<span th:text="${quiz.questions.size()}">10</span></span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+        </div>
+
+        <form method="post" th:action="@{'/quiz/' + ${quiz.id} + '/repondre'}" id="quizForm">
+            <div class="questions-container">
+                <div th:each="question, iter : ${quiz.questions}" class="question-card" 
+                     th:id="'question-' + ${question.id}">
+                    
+                    <div class="question-header">
+                        <span class="question-number" th:text="'Question ' + ${iter.index + 1}">Question 1</span>
+                    </div>
+                    
+                    <div class="question-text" th:text="${question.texte}">Texte de la question</div>
+                    
+                    <div class="options-container">
+                        <!-- Option 1 -->
+                        <label class="option-item">
+                            <input type="radio" 
+                                   th:name="'reponse_' + ${question.id}" 
+                                   th:value="1"
+                                   th:onchange="'updateProgress(); markAnswered(' + ${question.id} + ')'">
+                            <span th:text="${question.option1}">Option 1</span>
+                        </label>
+                        
+                        <!-- Option 2 -->
+                        <label class="option-item">
+                            <input type="radio" 
+                                   th:name="'reponse_' + ${question.id}" 
+                                   th:value="2"
+                                   th:onchange="'updateProgress(); markAnswered(' + ${question.id} + ')'">
+                            <span th:text="${question.option2}">Option 2</span>
+                        </label>
+                        
+                        <!-- Option 3 -->
+                        <label class="option-item" th:if="${question.option3 != null and question.option3 != ''}">
+                            <input type="radio" 
+                                   th:name="'reponse_' + ${question.id}" 
+                                   th:value="3"
+                                   th:onchange="'updateProgress(); markAnswered(' + ${question.id} + ')'">
+                            <span th:text="${question.option3}">Option 3</span>
+                        </label>
+                        
+                        <!-- Option 4 -->
+                        <label class="option-item" th:if="${question.option4 != null and question.option4 != ''}">
+                            <input type="radio" 
+                                   th:name="'reponse_' + ${question.id}" 
+                                   th:value="4"
+                                   th:onchange="'updateProgress(); markAnswered(' + ${question.id} + ')'">
+                            <span th:text="${question.option4}">Option 4</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="submit-container">
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    ✅ Voir mes résultats
+                </button>
+            </div>
         </form>
     </div>
+
+    <script>
+        let answeredQuestions = new Set();
+        const totalQuestions = /*[[${quiz.questions.size()}]]*/ 10;
+
+        function updateProgress() {
+            const answered = answeredQuestions.size;
+            document.getElementById('answeredCount').textContent = answered + '/' + totalQuestions;
+            
+            const percentage = (answered / totalQuestions) * 100;
+            document.getElementById('progressFill').style.width = percentage + '%';
+        }
+
+        function markAnswered(questionId) {
+            answeredQuestions.add(questionId);
+            document.getElementById('question-' + questionId).classList.add('answered');
+            updateProgress();
+        }
+
+        // Timer
+        let minutes = 30;
+        let seconds = 0;
+        const timerElement = document.getElementById('timer');
+        const timerValue = document.getElementById('timerValue');
+
+        function updateTimer() {
+            if (seconds === 0) {
+                if (minutes === 0) {
+                    // Temps écoulé
+                    document.getElementById('quizForm').submit();
+                    return;
+                }
+                minutes--;
+                seconds = 59;
+            } else {
+                seconds--;
+            }
+
+            timerValue.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+            if (minutes < 5) {
+                timerElement.classList.add('warning');
+            }
+        }
+
+        setInterval(updateTimer, 1000);
+
+        // Empêcher la soumission si aucune question répondue
+        document.getElementById('quizForm').addEventListener('submit', function(e) {
+            if (answeredQuestions.size === 0) {
+                e.preventDefault();
+                alert('Veuillez répondre à au moins une question');
+            } else if (answeredQuestions.size < totalQuestions) {
+                if (!confirm(`Vous n'avez répondu qu'à ${answeredQuestions.size} questions sur ${totalQuestions}. Voulez-vous quand même voir vos résultats ?`)) {
+                    e.preventDefault();
+                }
+            }
+        });
+
+        // Animation des options sélectionnées
+        document.querySelectorAll('.option-item input[type="radio"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                // Enlever la classe selected de tous les items de la même question
+                const name = this.name;
+                document.querySelectorAll(`input[name="${name}"]`).forEach(r => {
+                    r.closest('.option-item').classList.remove('selected');
+                });
+                
+                // Ajouter la classe selected à l'item sélectionné
+                this.closest('.option-item').classList.add('selected');
+            });
+        });
+    </script>
 </body>
 </html>
