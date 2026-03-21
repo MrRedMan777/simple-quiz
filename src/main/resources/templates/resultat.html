@@ -566,10 +566,7 @@
 
           <!-- Dans le menu utilisateur, même correction -->
 <div class="user-menu">
-    <div class="user-avatar" 
-         th:text="${#authentication != null and #authentication.name != null and #authentication.name.length() > 0} ? ${#authentication.name.substring(0,1).toUpperCase()} : '?'">
-        ?
-    </div>
+    <div class="user-avatar" th:text="${#authentication != null and #authentication.name != null and #authentication.name.length() > 0} ? ${#authentication.name.substring(0,1).toUpperCase()} : '?'">?</div>
     <div class="dropdown">
         <a href="/profil">👤 Mon profil</a>
         <a href="/quiz/resultats">📊 Mes résultats</a>
