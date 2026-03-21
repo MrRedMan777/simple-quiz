@@ -10,6 +10,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 @Configuration
 @EnableWebSecurity
@@ -18,10 +23,14 @@ public class SecurityConfig {
     @Bean
     public UserDetailsService userDetailsService(UserService userService) {
         return username -> {
+            System.out.println("🔐 Tentative de connexion pour : " + username);
             com.example.quiz.model.User user = userService.trouverParUsername(username);
             if (user == null) {
-                throw new UsernameNotFoundException("Utilisateur non trouvé");
+                System.out.println("❌ Échec : utilisateur non trouvé");
+                throw new UsernameNotFoundException("Utilisateur non trouvé: " + username);
             }
+            System.out.println("✅ Utilisateur trouvé : " + user.getUsername());
+            
             return org.springframework.security.core.userdetails.User
                 .withUsername(user.getUsername())
                 .password(user.getPassword())
@@ -44,14 +53,23 @@ public class SecurityConfig {
             )
             .formLogin(form -> form
                 .loginPage("/connexion")
+                .loginProcessingUrl("/connexion")
+                .usernameParameter("username")
+                .passwordParameter("password")
                 .defaultSuccessUrl("/quiz", true)
+                .failureUrl("/connexion?error=true")
                 .permitAll()
             )
             .logout(logout -> logout
-                .logoutSuccessUrl("/connexion?deconnexion")
+                .logoutUrl("/deconnexion")
+                .logoutSuccessUrl("/connexion?deconnexion=true")
+                .invalidateHttpSession(true)
+                .clearAuthentication(true)
+                .deleteCookies("JSESSIONID")
                 .permitAll()
             )
             .csrf(csrf -> csrf.disable());
+        
         return http.build();
     }
 }

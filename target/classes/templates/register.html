@@ -237,6 +237,11 @@
             <p>Déjà un compte ? <a href="/connexion">Se connecter</a></p>
         </div>
 
+        <!-- Dans register.html, ajoutez -->
+      <div th:if="${error}" class="alert alert-error" th:text="${error}">
+      ⚠️ Une erreur est survenue
+     </div>
+        
         <div class="features">
             <div class="feature"><span>📚</span>Quiz variés</div>
             <div class="feature"><span>📊</span>Suivi des scores</div>

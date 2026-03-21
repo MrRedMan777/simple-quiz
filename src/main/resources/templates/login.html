@@ -236,6 +236,19 @@
                 <input type="password" name="password" placeholder="••••••••" required>
             </div>
 
+            <!-- Dans login.html, ajoutez ces divs -->
+    <div th:if="${error}" class="alert alert-error" th:text="${error}">
+    ⚠️ Nom d'utilisateur ou mot de passe incorrect
+    </div>
+
+    <div th:if="${success}" class="alert alert-success" th:text="${success}">
+    ✅ Inscription réussie ! Connectez-vous
+    </div>
+
+        <div th:if="${param.deconnexion != null}" class="alert alert-success">
+    👋 À bientôt ! Vous êtes déconnecté
+    </div>
+            
             <button type="submit" class="login-btn">Se connecter</button>
         </form>
 

@@ -2,6 +2,7 @@ com\example\quiz\model\Quiz.class
 com\example\quiz\config\SecurityConfig.class
 com\example\quiz\controller\QuizController.class
 com\example\quiz\controller\AuthController.class
+com\example\quiz\controller\DebugController.class
 com\example\quiz\service\QuizService.class
 com\example\quiz\model\User.class
 com\example\quiz\service\UserService.class
