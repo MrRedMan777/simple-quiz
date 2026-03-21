@@ -1,4 +1,3 @@
-// com/example/quiz/config/SecurityConfig.java
 package com.example.quiz.config;
 
 import com.example.quiz.service.UserService;
@@ -40,22 +39,19 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/connexion", "/inscription", "/css/**").permitAll()
+                .requestMatchers("/", "/connexion", "/inscription", "/css/**", "/js/**").permitAll()
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
                 .loginPage("/connexion")
-                .loginProcessingUrl("/connexion")
-                .usernameParameter("username")
-                .passwordParameter("password")
                 .defaultSuccessUrl("/quiz", true)
                 .permitAll()
             )
             .logout(logout -> logout
-                .logoutUrl("/deconnexion")
                 .logoutSuccessUrl("/connexion?deconnexion")
                 .permitAll()
-            );
+            )
+            .csrf(csrf -> csrf.disable());
         return http.build();
     }
 }

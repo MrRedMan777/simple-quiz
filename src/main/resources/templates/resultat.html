@@ -2,64 +2,170 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Résultat</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Résultats | QuizMaster</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f5f5f5;
+        * {
             margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background: #f8f9fa;
             min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .result-box {
-            background: white;
-            padding: 40px;
-            border-radius: 10px;
-            text-align: center;
+
+        .result-card {
             max-width: 500px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            width: 90%;
+            background: white;
+            border-radius: 40px;
+            padding: 50px 40px;
+            text-align: center;
+            box-shadow: 0 30px 50px rgba(0, 0, 0, 0.1);
+            animation: scaleIn 0.5s ease-out;
         }
-        .score {
-            font-size: 3em;
-            font-weight: bold;
-            color: #28a745;
-            margin: 20px 0;
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
-        .btn {
-            display: inline-block;
-            padding: 10px 20px;
-            background: #667eea;
+
+        .quiz-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        .quiz-title {
+            font-size: 1.3em;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .score-circle {
+            margin: 30px auto;
+            width: 180px;
+            height: 180px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            margin: 5px;
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.3);
         }
-        .btn-green {
-            background: #28a745;
+
+        .score-number {
+            font-size: 3.5em;
+            font-weight: 700;
+        }
+
+        .score-total {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .message {
+            font-size: 1.2em;
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 30px;
+            background: #f0f0f0;
+        }
+
+        .message.perfect {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .message.good {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .message.keep {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #666;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 480px) {
+            .result-card {
+                padding: 35px 25px;
+            }
+            .score-circle {
+                width: 140px;
+                height: 140px;
+            }
+            .score-number {
+                font-size: 2.5em;
+            }
+            .btn-group {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="result-box">
-        <h2 th:text="${quiz.titre}">Résultat</h2>
-        <div class="score" th:text="${score} + '/' + ${total}">0/0</div>
-        
-        <div th:if="${score == total}">
-            🎉 Parfait ! Toutes les réponses sont correctes !
+    <div class="result-card">
+        <div class="quiz-icon">🏆</div>
+        <div class="quiz-title" th:text="${quiz.titre}">Quiz</div>
+
+        <div class="score-circle">
+            <div class="score-number" th:text="${score}">8</div>
+            <div class="score-total" th:text="'/' + ${total}">/10</div>
         </div>
-        <div th:if="${score >= total/2 and score < total}">
-            👍 Bon travail ! Vous avez la moyenne.
+
+        <div class="message" th:classappend="${score == total} ? 'perfect' : (${score >= total/2} ? 'good' : 'keep')">
+            <span th:if="${score == total}">🎉 Parfait ! Vous êtes incollable ! 🎉</span>
+            <span th:if="${score >= total/2 and score < total}">👍 Bon travail ! Continuez comme ça !</span>
+            <span th:if="${score < total/2}">💪 Courage ! La prochaine fois sera meilleure !</span>
         </div>
-        <div th:if="${score < total/2}">
-            💪 Continuez vos efforts !
-        </div>
-        
-        <div style="margin-top: 30px;">
-            <a href="/quiz" class="btn">Tous les quiz</a>
-            <a th:href="@{'/quiz/' + ${quiz.id}}" class="btn btn-green">Recommencer</a>
+
+        <div class="btn-group">
+            <a href="/quiz" class="btn btn-primary">📋 Tous les quiz</a>
+            <a th:href="@{'/quiz/' + ${quiz.id}}" class="btn btn-secondary">🔄 Recommencer</a>
         </div>
     </div>
 </body>

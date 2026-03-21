@@ -1,26 +1,15 @@
-// com/example/quiz/model/Question.java
 package com.example.quiz.model;
 
-import jakarta.persistence.*;
-
-@Entity
 public class Question {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
     private String texte;
     private String option1;
     private String option2;
     private String option3;
     private String option4;
-    private int bonneReponse; // 1,2,3 ou 4
-    
-    @ManyToOne
-    @JoinColumn(name = "quiz_id")
+    private int bonneReponse;
     private Quiz quiz;
     
-    // Getters et Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     

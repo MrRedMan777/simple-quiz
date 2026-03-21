@@ -2,33 +2,341 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Quiz disponibles</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz disponibles | QuizMaster</title>
     <style>
-        body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 20px; }
-        .header { background: white; padding: 20px; border-radius: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .quiz-card { background: white; padding: 20px; border-radius: 10px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .btn { display: inline-block; padding: 10px 20px; background: #667eea; color: white; text-decoration: none; border-radius: 5px; }
-        .logout-btn { background: #dc3545; border: none; padding: 8px 16px; color: white; border-radius: 5px; cursor: pointer; }
-        .empty { text-align: center; padding: 50px; color: #666; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background: #f8f9fa;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: white;
+            padding: 20px 40px;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand h2 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 1.8em;
+            font-weight: 700;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: #555;
+            font-weight: 500;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            color: #667eea;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: relative;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2em;
+            cursor: pointer;
+        }
+
+        .dropdown {
+            position: absolute;
+            top: 55px;
+            right: 0;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 10px 0;
+            min-width: 180px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s;
+        }
+
+        .user-menu:hover .dropdown {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown a, .dropdown button {
+            display: block;
+            width: 100%;
+            padding: 10px 20px;
+            text-align: left;
+            border: none;
+            background: none;
+            color: #555;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .dropdown a:hover, .dropdown button:hover {
+            background: #f5f5f5;
+            color: #667eea;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 40px auto;
+            padding: 0 40px;
+        }
+
+        .header-section {
+            margin-bottom: 40px;
+            animation: fadeInDown 0.5s;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .title h1 {
+            font-size: 2.5em;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .title p {
+            color: #999;
+            font-size: 1.1em;
+        }
+
+        .quiz-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+            animation: fadeInUp 0.5s;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .quiz-card {
+            background: white;
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .quiz-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 30px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .quiz-image {
+            height: 130px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+            position: relative;
+        }
+
+        .quiz-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(5px);
+            padding: 5px 12px;
+            border-radius: 20px;
+            color: white;
+            font-size: 0.8em;
+        }
+
+        .quiz-content {
+            padding: 25px;
+        }
+
+        .quiz-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .quiz-description {
+            color: #999;
+            font-size: 0.9em;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .quiz-meta {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            color: #888;
+            font-size: 0.85em;
+        }
+
+        .start-btn {
+            display: inline-block;
+            padding: 10px 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 30px;
+            color: white;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .start-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            background: white;
+            border-radius: 30px;
+            color: #999;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 15px 20px;
+            }
+            .nav-menu {
+                display: none;
+            }
+            .container {
+                padding: 0 20px;
+            }
+            .header-section {
+                text-align: center;
+            }
+            .quiz-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h2>📚 Quiz disponibles</h2>
-        <form method="post" th:action="@{/deconnexion}">
-            <button type="submit" class="logout-btn">Déconnexion</button>
-        </form>
-    </div>
-    
-    <div th:each="quiz : ${quizs}" class="quiz-card">
-        <h3 th:text="${quiz.titre}">Titre</h3>
-        <p th:text="${quiz.description}">Description</p>
-        <p>📝 Questions: <span th:text="${quiz.questions.size()}">0</span></p>
-        <a th:href="@{'/quiz/' + ${quiz.id}}" class="btn">Commencer →</a>
-    </div>
-    
-    <div th:if="${quizs == null or quizs.empty}" class="empty">
-        <p>Aucun quiz disponible pour le moment.</p>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <h2>✨ QuizMaster</h2>
+            </div>
+            <div class="nav-menu">
+                <a href="/quiz" class="nav-link">Accueil</a>
+                <a href="/quiz" class="nav-link">Quiz</a>
+            </div>
+            <div class="user-menu">
+                <div class="user-avatar">👤</div>
+                <div class="dropdown">
+                    <a href="#">👤 Mon profil</a>
+                    <a href="#">📊 Mes résultats</a>
+                    <hr style="margin: 5px 0;">
+                    <form method="post" th:action="@{/deconnexion}">
+                        <button type="submit">🚪 Déconnexion</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header-section">
+            <div class="title">
+                <h1>📚 Quiz disponibles</h1>
+                <p>Choisissez un quiz et testez vos connaissances</p>
+            </div>
+        </div>
+
+        <div class="quiz-grid">
+            <div th:each="quiz : ${quizs}" class="quiz-card">
+                <div class="quiz-image">
+                    <span th:text="${quiz.titre.contains('Culture') ? '📚' : (quiz.titre.contains('Java') ? '☕' : '🌍')}">📝</span>
+                    <div class="quiz-badge" th:text="${quiz.questions.size()} + ' questions'"></div>
+                </div>
+                <div class="quiz-content">
+                    <h3 class="quiz-title" th:text="${quiz.titre}">Titre</h3>
+                    <p class="quiz-description" th:text="${quiz.description}">Description</p>
+                    <div class="quiz-meta">
+                        <span>📝 <span th:text="${quiz.questions.size()}">0</span> questions</span>
+                        <span>⏱️ 15 min</span>
+                    </div>
+                    <a th:href="@{'/quiz/' + ${quiz.id}}" class="start-btn">Commencer →</a>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${quizs == null or quizs.empty}" class="empty-state">
+            <h3>😕 Aucun quiz disponible</h3>
+            <p>Revenez plus tard pour découvrir de nouveaux quiz !</p>
+        </div>
     </div>
 </body>
 </html>

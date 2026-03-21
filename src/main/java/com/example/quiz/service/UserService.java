@@ -1,26 +1,38 @@
-// com/example/quiz/service/UserService.java
 package com.example.quiz.service;
 
 import com.example.quiz.model.User;
-import com.example.quiz.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
     
-    @Autowired
-    private UserRepository userRepository;
-    
+    private List<User> users = new ArrayList<>();
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private Long nextId = 1L;
     
     public User inscrire(User user) {
+        user.setId(nextId++);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
+        users.add(user);
+        return user;
     }
     
     public User trouverParUsername(String username) {
-        return userRepository.findByUsername(username);
+        Optional<User> user = users.stream()
+            .filter(u -> u.getUsername().equals(username))
+            .findFirst();
+        return user.orElse(null);
+    }
+    
+    public boolean existsByUsername(String username) {
+        return users.stream().anyMatch(u -> u.getUsername().equals(username));
+    }
+    
+    public boolean existsByEmail(String email) {
+        return users.stream().anyMatch(u -> u.getEmail().equals(email));
     }
 }

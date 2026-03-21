@@ -1,4 +1,3 @@
-// com/example/quiz/controller/HomeController.java
 package com.example.quiz.controller;
 
 import org.springframework.security.core.Authentication;
