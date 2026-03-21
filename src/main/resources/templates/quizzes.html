@@ -43,11 +43,6 @@
             border-radius: 5px;
             cursor: pointer;
         }
-        .empty {
-            text-align: center;
-            padding: 50px;
-            color: #666;
-        }
     </style>
 </head>
 <body>
@@ -65,9 +60,8 @@
         <a th:href="@{'/quiz/' + ${quiz.id}}" class="btn">Commencer →</a>
     </div>
     
-    <div th:if="${quizs == null or quizs.empty}" class="empty">
+    <div th:if="${quizs == null or quizs.empty}" style="text-align: center; margin-top: 50px;">
         <p>Aucun quiz disponible pour le moment.</p>
-        <p>Connectez-vous en tant qu'admin pour créer des quiz.</p>
     </div>
 </body>
 </html>
